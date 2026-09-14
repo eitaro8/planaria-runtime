@@ -14,12 +14,13 @@ if ! docker inspect "${registry_name}" >/dev/null 2>&1; then
     registry:2.8.3
 fi
 
-if ! kind get clusters | grep -qx "${cluster_name}"; then
-  kind create cluster --name "${cluster_name}" --config kind-cluster.yaml
+if ! mise exec -- kind get clusters | grep -qx "${cluster_name}"; then
+  mise exec -- kind create cluster --name "${cluster_name}" --config kind-cluster.yaml
 fi
+mise exec -- kind export kubeconfig --name "${cluster_name}"
 
 registry_directory="/etc/containerd/certs.d/localhost:${registry_port}"
-for node in $(kind get nodes --name "${cluster_name}"); do
+for node in $(mise exec -- kind get nodes --name "${cluster_name}"); do
   docker exec "${node}" mkdir -p "${registry_directory}"
   printf '%s\n' \
     "[host.\"http://${registry_name}:5000\"]" \
@@ -30,7 +31,7 @@ if [ "$(docker inspect -f '{{json .NetworkSettings.Networks.kind}}' "${registry_
   docker network connect kind "${registry_name}"
 fi
 
-kubectl apply -f - <<EOF
+mise exec -- kubectl apply -f - <<EOF
 apiVersion: v1
 kind: ConfigMap
 metadata:
