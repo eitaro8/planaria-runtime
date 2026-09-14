@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: planaria-runtime-local
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/eitaro8/planaria-runtime.git
+    targetRevision: main
+    path: k8s/apps/planaria-runtime/overlays/local
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: planaria-local
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
