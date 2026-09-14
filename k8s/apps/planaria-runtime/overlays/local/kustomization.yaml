@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: planaria-local
 
 resources:
+  - namespace.yaml
   - ../../base
 
 images:
