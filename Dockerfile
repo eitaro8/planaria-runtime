@@ -11,5 +11,5 @@ FROM gcr.io/distroless/static-debian12
 COPY --from=builder /app/proxy /proxy
 EXPOSE 8080
 
-USER nonroot:nonroot
+USER 65532:65532
 ENTRYPOINT ["/proxy"]
