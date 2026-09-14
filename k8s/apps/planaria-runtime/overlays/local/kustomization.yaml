@@ -1,0 +1,20 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: planaria-local
+
+resources:
+  - ../../base
+
+images:
+  - name: planaria-runtime
+    newName: localhost:5001/planaria-runtime
+    newTag: dev
+
+patches:
+  - target:
+      kind: Deployment
+      name: planaria-runtime
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/imagePullPolicy
+        value: Always
