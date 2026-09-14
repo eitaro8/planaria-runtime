@@ -48,9 +48,20 @@ func eventsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func healthHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		w.Header().Set("Allow", http.MethodGet)
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
+
 func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/events", eventsHandler)
+	mux.HandleFunc("/healthz", healthHandler)
 
 	server := &http.Server{
 		Addr:              ":8080",

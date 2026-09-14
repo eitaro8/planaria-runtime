@@ -41,3 +41,14 @@ func TestEventsHandlerSetsStreamingHeaders(t *testing.T) {
 		}
 	}
 }
+
+func TestHealthHandler(t *testing.T) {
+	request := httptest.NewRequest(http.MethodGet, "/healthz", nil)
+	response := httptest.NewRecorder()
+
+	healthHandler(response, request)
+
+	if response.Code != http.StatusNoContent {
+		t.Fatalf("status = %d, want %d", response.Code, http.StatusNoContent)
+	}
+}
